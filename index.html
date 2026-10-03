@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LeakGuard - Know where your money is leaking</title>
+<meta name="description" content="LeakGuard helps small businesses find cash, stock and payment discrepancies and decide what to investigate.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0B2545"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LeakGuard">
+<style>
+:root{--navy:#0B1F33;--teal:#0F766E;--em:#16A34A;--bg:#F7F9FC;--card:#fff;--tx:#172033;--mu:#64748B;--bd:#E2E8F0;--r:#DC2626;--a:#F59E0B;--g:#16A34A;--bl:#2563EB;--on:#fff;--sf:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#09182B;--card:#10223B;--tx:#E6EDF5;--mu:#93A4B8;--bd:#1E3452;--teal:#2DD4BF;--em:#10B981;--r:#F26B5B;--a:#F5A524;--g:#34D399;--bl:#60A5FA;--on:#062018}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:760px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(92px + var(--sf))}
+body:not(.shell) #app{max-width:440px;padding-bottom:32px}
+h1{font-size:22px;line-height:1.25;margin:4px 0 12px;font-weight:700;letter-spacing:-.01em}h2{font-size:15px;margin:22px 0 10px;font-weight:700}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin:10px 0;box-shadow:0 1px 2px rgba(11,37,69,.05);min-width:0}
+.c[onclick],tr[onclick]{cursor:pointer}.c[onclick]:hover{border-color:var(--teal)}
+.r{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:6px}.r:first-child{margin-top:0}
+.m{color:var(--mu);font-size:13px;overflow-wrap:anywhere}.big{font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.01em}.row{display:flex;gap:12px;align-items:center}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:11px 12px;width:100%;min-height:44px}textarea{min-height:84px}
+input:focus,select:focus,textarea:focus{border-color:var(--teal)}label{display:block;font-size:13px;font-weight:600;color:var(--mu);margin:12px 0 5px}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:10px 14px;min-height:44px;cursor:pointer}button:hover{border-color:var(--teal)}
+button.a{background:var(--teal);border-color:var(--teal);color:var(--on);font-weight:600;width:100%;margin-top:12px}button.a:hover{filter:brightness(1.07)}
+button.g{background:none;color:var(--teal);width:100%;margin-top:8px;border-color:var(--teal);font-weight:600}
+button.hb{width:100%;margin:8px 0 12px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}.chips button{white-space:nowrap;min-height:38px;padding:6px 14px}.chips .on{background:var(--teal);color:var(--on);border-color:var(--teal)}
+.hero{background:var(--navy);color:#fff;border-radius:12px;padding:18px;border-bottom:3px solid var(--teal)}.hero .m{color:#B7C6DA}.hrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}.hero .sv{color:#fff}
+.sv{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600}.sv i{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--k)}
+.c1{--k:var(--r)}.c2{--k:var(--a)}.c3{--k:var(--g)}.f{border-left:4px solid var(--k)}
+.tag{font-size:12px;border:1px solid var(--bd);border-radius:20px;padding:1px 10px;color:var(--mu);white-space:nowrap}
+.st-investigating{color:var(--bl);border-color:var(--bl)}.st-explained{color:var(--teal);border-color:var(--teal)}.st-resolved{color:var(--g);border-color:var(--g)}
+.neg{color:var(--r)}.warn{color:var(--a)}.demo{background:#FEF3C7;color:#78350F;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;margin:0 0 10px}
+.tl{border-left:2px solid var(--bd);margin:8px 0 0 6px;padding-left:12px}.tl div{margin:0 0 9px}.e{color:var(--mu);padding:14px}
+.dg,.fg,.om{display:grid;gap:12px;grid-template-columns:1fr}.dg>.c,.fg>.c,.om>.c{margin:0}.full{grid-column:1/-1}.w2{grid-column:1/-1}
+.od{display:none;overflow-x:auto}.tb{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);border-radius:10px}
+.tb th{text-align:left;font-size:12px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;padding:12px 14px;border-bottom:1px solid var(--bd)}.tb td{padding:13px 14px;border-bottom:1px solid var(--bd)}
+.tb tr:last-child td{border-bottom:0}.tb tbody tr:hover{background:var(--bg)}.tb .n{text-align:right;font-variant-numeric:tabular-nums}
+.rpt .r{padding:9px 0;border-bottom:1px solid var(--bd);margin:0}.rpt .r:last-child{border-bottom:0}
+.sb{display:none}.bn{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);display:flex;padding-bottom:var(--sf);z-index:5}
+.bn button{flex:1;border:0;border-radius:0;background:none;font-size:11px;color:var(--mu);min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0;min-width:0}.bn .on{color:var(--teal);font-weight:700}
+#sh{position:fixed;inset:0;background:rgba(11,37,69,.55);display:none;z-index:9;align-items:flex-end;justify-content:center}#sh>div{background:var(--bg);width:100%;max-width:600px;max-height:92%;overflow:auto;border-radius:14px 14px 0 0;padding:16px 16px calc(20px + var(--sf))}
+#t{position:fixed;left:12px;right:12px;bottom:calc(76px + var(--sf));background:var(--navy);color:#fff;padding:11px;border-radius:8px;display:none;z-index:20;text-align:center}
+.logo{width:64px;height:64px;border-radius:14px;display:block;margin:28px auto 8px}:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media (min-width:640px){.dg,.fg,.om{grid-template-columns:repeat(2,1fr)}button.hb{width:auto;margin:0 0 6px}#app{padding-left:24px;padding-right:24px}}
+@media (min-width:900px){
+ .bn{display:none}.om{display:none}.od{display:block}
+ .sb{display:flex;flex-direction:column;gap:4px;position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--navy);color:#fff;padding:22px 14px;z-index:4}
+ body.shell #app{max-width:none;margin:0 0 0 248px;padding:32px 36px 48px}body.shell #main{max-width:1240px;margin:0 auto}
+ .sb .brand{display:flex;align-items:center;gap:10px;padding:2px 10px 22px;font-size:18px}.sb img{border-radius:8px}
+ .si{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-left:3px solid transparent;border-radius:6px;color:#C9D6E6;padding:11px 12px;font-size:14px}.si:hover{background:rgba(255,255,255,.07);color:#fff}.si.on{background:rgba(255,255,255,.1);color:#fff;border-left-color:#2DD4BF;font-weight:600}
+ .sbf{margin-top:auto;padding:12px 10px 0;border-top:1px solid rgba(255,255,255,.12);font-size:13px}.sbf .m2{color:#9FB2C9;font-size:12px;margin-bottom:8px;overflow-wrap:anywhere}
+ #sh{align-items:center}#sh>div{border-radius:14px;max-height:88%;padding:22px}#t{left:auto;right:24px;bottom:24px;width:340px}
+ h1{font-size:26px}}
+@media (min-width:1100px){.dg,.fg{grid-template-columns:repeat(3,1fr)}.w2{grid-column:span 2}.rpt{display:grid;grid-template-columns:1fr 1fr;column-gap:40px}.rpt .r:nth-last-child(2){border-bottom:0}}
+
+/* brand sheet components */
+.sb .si.on{background:var(--teal);color:#fff;border-left-color:transparent}.sb .si{position:relative}.sb .bdg{margin-left:auto;background:#DC2626;color:#fff;border-radius:20px;font-size:11px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.tbar{display:none}.mtop{display:flex;align-items:center;gap:8px;margin:0 0 10px}.mtop b{font-size:17px;color:var(--navy)}.mtop .sp{margin-left:auto}
+.bell{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:50%;width:40px;height:40px;min-height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;color:var(--tx)}.bell em{position:absolute;top:-3px;right:-3px;background:#DC2626;color:#fff;border-radius:20px;font-size:10px;font-style:normal;min-width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.kpi{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.kpi .ai{width:46px;height:46px;border-radius:50%;background:#FEE2E2;color:#DC2626;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.cnts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}.cn{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 8px 8px 24px;font-size:12px;display:grid;position:relative;min-width:0;line-height:1.3}.cn i{width:10px;height:10px;border-radius:50%;background:var(--k);position:absolute;left:9px;top:13px}.cn b{font-size:18px;color:var(--tx)}
+.ct{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-weight:700}.it{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.it.g{background:#DCFCE7;color:#16A34A}.it.o{background:#FEF3C7;color:#D97706}.it.b{background:#DBEAFE;color:#2563EB}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:2px 0}.kv span{color:var(--mu)}.lnk{color:var(--teal);font-weight:600;font-size:13px;margin-top:8px;display:inline-block}
+.splash{position:fixed;inset:0;z-index:30;overflow:auto;background:linear-gradient(180deg,#0B1F33,#0A3A47);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px}.splash img{width:96px;height:96px;border-radius:22px}.splash h1{color:#fff;font-size:34px;margin:18px 0 6px}.splash p{color:#B7C6DA;margin:0 0 30px;max-width:320px}.splash .btns{width:100%;max-width:340px}.splash button{width:100%;margin:6px 0;font-weight:700}.splash .go{background:#16A34A;border-color:#16A34A;color:#fff}.splash .ol{background:none;border-color:rgba(255,255,255,.45);color:#fff}.splash small{display:block;margin-top:34px;letter-spacing:.2em;font-size:11px;color:#8FA6C0}
+.prog{height:6px;background:var(--bd);border-radius:6px;overflow:hidden;margin:6px 0 18px}.prog i{display:block;height:100%;background:#16A34A}
+@media (min-width:900px){.mtop{display:none}.tbar{display:flex;align-items:center;justify-content:flex-end;gap:14px;margin:-8px 0 20px}.tbar select{width:auto;min-width:200px;background:var(--card)}.cnts{max-width:560px}}
+</style></head><body>
+<div id="app"></div><div id="sh"></div><div id="t"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const sb=supabase.createClient('https://vrpznpzowfgpuiunqlrb.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZycHpucHpvd2ZncHVpdW5xbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5MjU0NTcsImV4cCI6MjEwNjUwMTQ1N30.X28ZJeLVgHNC_fkfzSawdqyb6H76xLhaRkoyRk9w28U');
+let U=null,BZ=[],B=null,D={prod:[],mov:[],counts:[],cash:[],rec:[],fnd:[],nt:[]},tab='home',ff='open',rp='week',uid=null;
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS={g(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}},s(k,x){try{localStorage.setItem(k,x)}catch(e){}}};
+const dstr=n=>{const d=new Date();d.setDate(d.getDate()+n);return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)},today=()=>dstr(0);
+const fmt=n=>(n<0?'-':'')+(B?B.currency:'UGX')+' '+Math.round(Math.abs(+n||0)).toLocaleString('en-US');
+const v=id=>($('#'+id)||{}).value||'',num=id=>parseFloat(String(v(id)).replace(/[^\d.\-]/g,''))||0;
+const fld=(id,l,val,type,x)=>`<label>${l}</label><input id="${id}" type="${type||'text'}" value="${esc(val==null?'':val)}" ${x||''}>`;
+const sel=(id,l,a,cur)=>`<label>${l}</label><select id="${id}">${a.map(o=>`<option ${o==cur?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+function toast(m){const t=$('#t');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3000)}
+function sheet(h){const s=$('#sh');s.innerHTML='<div>'+h+'</div>';s.style.display='flex';s.onclick=e=>{if(e.target===s)closeS()}}
+function closeS(){$('#sh').style.display='none';$('#sh').innerHTML=''}
+async function ok(p){const r=await p;if(r.error){toast(r.error.message);throw r.error}return r.data}
+const guard=f=>async function(...a){if(guard.b)return;guard.b=1;try{return await f.apply(this,a)}finally{guard.b=0}};
+const I={home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/>',cash:'<rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/>',box:'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/>',owed:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',flag:'<path d="M6 21V4M6 5h11l-2 4 2 4H6"/>',more:'<circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/>'};
+const ic=(n,z=22)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+
+/* ---- helpers ---- */
+const SVR={critical:0,attention:1,monitor:2},SVN={critical:'Critical',attention:'Attention',monitor:'Monitor'},SVC={critical:'c1',attention:'c2',monitor:'c3'};
+const sortF=a=>[...a].sort((x,y)=>SVR[x.severity]-SVR[y.severity]||(+y.impact||0)-(+x.impact||0));
+const isOpen=f=>f.status=='open'||f.status=='investigating';
+const expCash=c=>+c.opening+ +c.cash_received-+c.cash_expenses-+c.refunds+ +c.other_net;
+const expQty=p=>+p.opening_qty+D.mov.filter(m=>m.product_id==p.id).reduce((a,m)=>a+({purchase:1,sale:-1,return:-1,damage:-1,adjustment:1}[m.kind])*+m.qty,0);
+const remn=r=>+r.amount-+r.paid,daysPast=d=>Math.round((new Date(today())-new Date(d))/864e5);
+
+/* ---- findings engine (transparent rules) ---- */
+function rules(){const R=[],t=today(),S=[...D.cash].sort((a,b)=>a.day<b.day?-1:1);
+ const add=(k,type,sev,title,desc,impact,ev,act)=>R.push({dedupe_key:k,type,severity:sev,title,description:desc,impact,evidence:ev,action:act});
+ S.forEach((c,i)=>{const e=expCash(c),df=+c.actual_closing-e,ad=Math.abs(df);
+  if(ad>=Math.max(1000,e*.005))add('cash:'+c.day,'cash',ad>=100000||ad>=e*.05?'critical':ad>=20000?'attention':'monitor',df<0?'Cash discrepancy':'Cash surplus',`Expected ${fmt(e)}, actual ${fmt(c.actual_closing)}. Difference ${fmt(df)} on ${c.day}.`,ad,'Cash close '+c.day,'Review '+(c.day==t?"today's":c.day)+' transactions, refunds and expenses.');
+  const P=S.slice(0,i);if(P.length>=3){const av=k=>P.reduce((a,x)=>a+ +x[k],0)/P.length;
+   if(+c.largest_txn>0&&+c.largest_txn>3*av('largest_txn'))add('txn:'+c.day,'txn','attention','Unusual transaction',`${fmt(c.largest_txn)} is significantly above this business's recent pattern (usual largest about ${fmt(av('largest_txn'))}). Review the transaction.`,+c.largest_txn,'Cash close '+c.day,'Review this transaction and who approved it.');
+   if(c.refund_count>=3&&c.refund_count>2*av('refund_count'))add('refund:'+c.day,'refund','attention','Unusually high refunds',`${c.refund_count} refunds on ${c.day}, against about ${av('refund_count').toFixed(1)} on a usual day.`,+c.refunds||null,'Cash close '+c.day,'Review the refund records and reasons.');
+   if(c.void_count>=3&&c.void_count>2*av('void_count'))add('void:'+c.day,'void','attention','Repeated voids',`${c.void_count} voids on ${c.day}, against about ${av('void_count').toFixed(1)} on a usual day.`,null,'Cash close '+c.day,'Review the voided transactions.')}});
+ D.counts.forEach(sc=>{const df=+sc.counted-+sc.expected;if(!df)return;const p=D.prod.find(x=>x.id==sc.product_id)||{name:'Product'},im=Math.abs(df)*+sc.unit_value,n=Math.abs(df);
+  add('stock:'+sc.id,'stock',df<0?(im>=200000?'critical':'attention'):'monitor',df<0?'Stock discrepancy':'Stock surplus',`${p.name}: expected ${+sc.expected}, counted ${+sc.counted}. ${n} unit${n>1?'s':''} ${df<0?'unaccounted for':'more than expected'}.`,im,'Stock count '+String(sc.created_at).slice(0,10),'Review stock movements, sales, returns and adjustments.')});
+ D.rec.forEach(r=>{const rm=remn(r);if(rm<=0)return;const d=daysPast(r.due_on);
+  if(d>0)add('rec:'+r.id+':overdue','rec',d>60?'critical':'attention','Overdue receivable',`${r.customer} owes ${fmt(rm)}, due ${d} day${d>1?'s':''} ago.`,rm,r.reference||'Receivable','Follow up with this customer.');
+  else if(d>=-7)add('rec:'+r.id+':soon','rec','monitor','Receivable due soon',`${r.customer} owes ${fmt(rm)}, due ${d==0?'today':'in '+(-d)+' days'}.`,rm,r.reference||'Receivable','Send a friendly payment reminder.')});
+ return R}
+async function analyze(){try{const R=rules(),ex=Object.fromEntries(D.fnd.map(f=>[f.dedupe_key,f])),keys=new Set(R.map(r=>r.dedupe_key));
+ const ins=R.filter(r=>!ex[r.dedupe_key]).map(r=>({...r,business_id:B.id}));let nw=[];
+ if(ins.length)nw=await ok(sb.from('findings').insert(ins).select());
+ if(nw.length)await ok(sb.from('notifications').insert(nw.map(f=>({business_id:B.id,finding_id:f.id,message:f.title+(f.impact?': '+fmt(f.impact)+' requires review':' requires review')}))));
+ for(const r of R){const e=ex[r.dedupe_key];if(e&&isOpen(e)&&(+e.impact!=+r.impact||e.description!=r.description||e.severity!=r.severity))await ok(sb.from('findings').update({impact:r.impact,description:r.description,severity:r.severity}).eq('id',e.id))}
+ for(const e of D.fnd)if(isOpen(e)&&['cash','txn','refund','void','rec'].includes(e.type)&&!keys.has(e.dedupe_key))await ok(sb.from('findings').update({status:'resolved'}).eq('id',e.id));
+ if(ins.length||D.fnd.length)await loadData()}catch(e){}}
+
+/* ---- load + auth ---- */
+async function loadData(){const q=(t,o)=>{let x=sb.from(t).select('*').eq('business_id',B.id);return o?o(x):x};
+ const[a,b,c,d,e,f,g]=await Promise.all([q('products'),q('inventory_movements'),q('stock_counts'),q('cash_sessions',x=>x.order('day',{ascending:false})),q('receivables'),q('findings'),q('notifications',x=>x.order('created_at',{ascending:false}).limit(40))].map(ok));
+ D={prod:a,mov:b,counts:c,cash:d,rec:e,fnd:f,nt:g}}
+async function refresh(){try{await loadData();await analyze();render()}catch(e){}}
+async function boot(){if(!U){B=null;return splash()}$('#app').innerHTML='<p class="e">Loading…</p>';
+ try{BZ=await ok(sb.from('businesses').select('*').order('created_at'));if(!BZ.length)return onboard();
+  B=BZ.find(b=>b.id==LS.g('lg_biz',''))||BZ.find(b=>!b.is_demo)||BZ[0];await loadData();render();await analyze();render()}
+ catch(e){$('#app').innerHTML='<p class="e">Could not load your data. Check your connection.</p><button class="a" onclick="boot()">Try again</button>'}}
+sb.auth.onAuthStateChange((ev,s)=>{if(ev=='TOKEN_REFRESHED')return;const id=s&&s.user?s.user.id:null;if(id===uid&&(ev!='SIGNED_IN'||B))return;uid=id;U=s?s.user:null;setTimeout(boot,0)});
+function authView(m){shell(0);$('#app').innerHTML=`<img class="logo" src="icon-192.png" alt=""><h1 style="text-align:center">LeakGuard</h1><p class="m" style="text-align:center">Know where your money is leaking.</p>${fld('em','Email','','email')}${fld('pw','Password (6+ characters)','','password')}<button class="a" onclick="doAuth('${m}')">${m=='up'?'Create account (30 days free)':'Sign in'}</button><p class="m" style="text-align:center">${m=='up'?'Have an account?':'New here?'} <a href="#" onclick="authView('${m=='up'?'in':'up'}');return false">${m=='up'?'Sign in':'Create account'}</a></p><p class="m" style="text-align:center"><a href="#" onclick="splash();return false">Back</a></p>`}
+async function doAuth(m){const e=v('em').trim(),p=v('pw');if(!e||p.length<6)return toast('Enter your email and a password of 6+ characters.');
+ const r=m=='up'?await sb.auth.signUp({email:e,password:p}):await sb.auth.signInWithPassword({email:e,password:p});if(r.error)return toast(r.error.message);if(m=='up'&&!r.data.session)toast('Check your email to confirm, then sign in.')}
+const TYPES=['Hardware shop','Supermarket','Wholesale shop','Boutique','Electronics / phones','Pharmacy','Restaurant','Spare parts','Building materials','Distributor','Other'],YN=['Yes','No'];
+function onboard(){shell(0);$('#app').innerHTML=`<h1>Set up your business</h1><p class="m">One minute. You get 30 days of full access, no card needed.</p>${fld('o1','Business name')}${sel('o2','Business type',TYPES)}${fld('o3','Location')}${fld('o4','Number of employees','','number')}${sel('o5','Do you hold inventory?',YN)}${sel('o6','Do you sell on credit?',YN)}${sel('o7','Do you handle cash?',YN)}<button class="a" onclick="saveOb()">Start LeakGuard</button><button class="g" onclick="demo()">Or explore with demo data</button>`}
+async function saveOb(){if(!v('o1').trim())return toast('Enter your business name.');
+ try{const id=await ok(sb.rpc('create_business',{p_name:v('o1').trim(),p_type:v('o2'),p_location:v('o3').trim(),p_employees:Math.round(num('o4')),p_inv:v('o5')=='Yes',p_credit:v('o6')=='Yes',p_cash:v('o7')=='Yes'}));LS.s('lg_biz',id);await boot()}catch(e){}}
+
+/* ---- shell ---- */
+function render(){const T=[['home','Home','home',1],['cash','Cash','cash',B.uses_cash],['stock','Stock','box',B.has_inventory],['owed','Owed','owed',B.has_credit],['find','Findings','flag',1],['more','More','more',1]].filter(t=>t[3]);
+ if(!T.some(t=>t[0]==tab))tab='home';shell(1);
+ const body={home:homeV,cash:cashV,stock:stockV,owed:owedV,find:findV,more:moreV}[tab]();
+ $('#app').innerHTML=`<aside class="sb"><div class="brand"><img src="icon-192.png" alt="" width="34" height="34"><b>LeakGuard</b></div>${T.map(([k,n,i])=>`<button class="si ${tab==k?'on':''}" onclick="go('${k}')">${ic(i,20)}<span>${n}</span></button>`).join('')}<div class="sbf"><div>${esc(B.name)}</div><div class="m2">${esc(U.email)}</div><button class="si" onclick="sb.auth.signOut()">Sign out</button></div></aside><main id="main">${B.is_demo?'<div class="demo">DEMO DATA. This is a sample business, not your real data.</div>':''}${body}</main><nav class="bn">${T.map(([k,n,i])=>`<button class="${tab==k?'on':''}" onclick="go('${k}')">${ic(i)}<span>${n}</span></button>`).join('')}</nav>`;
+ try{document.querySelectorAll('[onclick]:not(button):not(a)').forEach(e=>{e.tabIndex=0})}catch(e){}}
+
+const shell=on=>{try{document.body.classList.toggle('shell',!!on)}catch(e){}};
+function go(k){tab=k;render();scrollTo(0,0)}
+function lst(items,heads,cells,card,click){const th=heads.map(h=>`<th class="${h[0]=='>'?'n':''}">${h.replace(/^>/,'')}</th>`).join('');
+ return `<div class="om">${items.map(card).join('')}</div><div class="od"><table class="tb"><thead><tr>${th}</tr></thead><tbody>${items.map(it=>`<tr onclick="${click(it)}">${cells(it).map((x,i)=>`<td class="${heads[i][0]=='>'?'n':''}">${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+const empty=(t,x)=>`<div class="c e"><b>${t}</b><br>${x}</div>`,dfc=d=>`<b class="${d<0?'neg':d>0?'warn':''}">${fmt(d)}</b>`;
+function chart(){const S=[...D.cash].sort((a,b)=>a.day<b.day?-1:1).slice(-7);if(S.length<2)return '';const mx=Math.max(...S.map(c=>+c.cash_received),1),w=300/S.length;
+ return `<div class="c full"><div class="r"><b>Cash received, last ${S.length} closes</b><span class="m">Red bars have a difference to review</span></div><svg viewBox="0 0 300 112" width="100%" role="img" aria-label="Cash received per day" style="margin-top:8px;max-height:220px">${S.map((c,i)=>{const h=Math.max(2,+c.cash_received/mx*78),e=expCash(c),bad=Math.abs(+c.actual_closing-e)>=Math.max(1000,e*.005);return `<rect x="${i*w+w*.18}" y="${92-h}" width="${w*.64}" height="${h}" rx="3" style="fill:var(${bad?'--r':'--teal'})"/><text x="${i*w+w/2}" y="106" font-size="8" text-anchor="middle" style="fill:var(--mu)">${c.day.slice(5)}</text>`}).join('')}</svg></div>`}
+const fcard=f=>`<div class="c f ${SVC[f.severity]}" onclick="openF('${f.id}')"><div class="r"><span class="sv"><i></i>${SVN[f.severity]}</span><span class="tag st-${f.status}">${esc(f.status)}</span></div><div style="margin-top:6px"><b>${esc(f.title)}</b>${f.impact?` · <b>${fmt(f.impact)}</b>`:''}</div><div class="m">${esc(f.description)}</div></div>`;
+
+/* ---- dashboard ---- */
+function homeV(){const F=D.fnd.filter(isOpen),n=s=>F.filter(f=>f.severity==s).length,tot=F.reduce((a,f)=>a+ +(f.impact||0),0),lc=D.cash[0],od=D.rec.filter(r=>remn(r)>0&&daysPast(r.due_on)>0).reduce((a,r)=>a+remn(r),0),sd=F.filter(f=>f.type=='stock').length,top=sortF(F),un=D.nt.filter(x=>!x.is_read).length,dl=Math.max(0,Math.ceil((new Date(B.trial_ends_at)-new Date())/864e5)),lcd=lc?+lc.actual_closing-expCash(lc):0;
+ return `<div class="hd"><div><h1>Today's Business Control</h1><div class="m">${esc(B.name)} · Ultra trial: ${dl} day${dl==1?'':'s'} left, no payment needed</div></div></div>
+ <div class="dg" style="margin-top:10px"><div class="hero full"><div class="m">Potential money requiring attention</div><div class="big">${fmt(tot)}</div><div class="hrow"><span class="sv c1"><i></i>Critical ${n('critical')}</span><span class="sv c2"><i></i>Attention ${n('attention')}</span><span class="sv c3"><i></i>Monitor ${n('monitor')}</span></div></div>
+ ${un?`<div class="c full f c2" onclick="go('more')"><b>${un} new alert${un>1?'s':''}</b><div class="m">Tap to review</div></div>`:''}
+ ${B.uses_cash?`<div class="c" onclick="go('cash')"><div class="m">Cash${lc?' · '+lc.day:''}</div>${lc?`<div class="r"><span>Expected ${fmt(expCash(lc))}</span><span>Actual ${fmt(lc.actual_closing)}</span></div><div style="margin-top:6px">Difference ${dfc(lcd)}</div>`:'<div class="m" style="margin-top:6px">No cash close recorded yet. Tap to record one.</div>'}</div>`:''}
+ ${B.has_inventory?`<div class="c" onclick="go('stock')"><div class="m">Stock</div><div class="big">${sd}</div><div class="m">discrepanc${sd==1?'y':'ies'} to review</div></div>`:''}
+ ${B.has_credit?`<div class="c" onclick="go('owed')"><div class="m">Receivables overdue</div><div class="big" style="font-size:22px">${fmt(od)}</div></div>`:''}
+ ${chart()}</div>
+ <h2>What should I do next?</h2>${top.length?`<div class="fg">${top.slice(0,6).map(fcard).join('')}</div><button class="g" onclick="go('find')">View all findings</button>`:empty('Nothing needs attention yet.',`Record today's cash close${B.has_inventory?', add products and count stock':''}${B.has_credit?' or add customer balances':''} and LeakGuard will check them for discrepancies.`)+(D.cash.length+D.prod.length+D.rec.length?'':'<button class="g" onclick="demo()">Load demo data to see it in action</button>')}`}
+
+/* ---- cash ---- */
+function cashV(){return `<div class="hd"><h1>Cash control</h1><button class="a hb" onclick="cashForm()">+ Close cash for a day</button></div>`+(D.cash.length?lst(D.cash,['Day','>Expected','>Actual','>Difference'],c=>{const e=expCash(c);return [c.day,fmt(e),fmt(c.actual_closing),dfc(+c.actual_closing-e)]},c=>{const e=expCash(c);return `<div class="c" onclick="cashForm('${c.day}')"><div class="r"><b>${c.day}</b>${dfc(+c.actual_closing-e)}</div><div class="m">Expected ${fmt(e)} · Actual ${fmt(c.actual_closing)}</div></div>`},c=>`cashForm('${c.day}')`):empty('No cash closes yet.','Enter opening cash, cash received, expenses and the cash you actually counted at close.'))}
+function cashForm(day){const c=D.cash.find(x=>x.day==day)||{},last=D.cash[0];
+ sheet(`<h1>Cash close</h1><div oninput="prevCash()">${fld('k1','Day',c.day||today(),'date')}${fld('k2','Opening cash',c.opening!=null?c.opening:(last?last.actual_closing:''),'number','inputmode="decimal"')}${fld('k3','Cash received (sales, payments in)',c.cash_received,'number')}${fld('k4','Cash expenses',c.cash_expenses,'number')}${fld('k5','Refunds paid out',c.refunds,'number')}${fld('k6','Other cash in (+) or out (-)',c.other_net,'number')}${fld('k7','Actual cash counted at close',c.actual_closing,'number')}<div class="c" id="pv"></div>${fld('k8','Number of refunds',c.refund_count,'number')}${fld('k9','Number of voids',c.void_count,'number')}${fld('k10','Largest single transaction',c.largest_txn,'number')}${fld('k11','Note',c.note)}</div><button class="a" onclick="saveCash()">Save cash close</button>`);prevCash()}
+function prevCash(){const e=num('k2')+num('k3')-num('k4')-num('k5')+num('k6'),df=num('k7')-e;$('#pv').innerHTML=`<div class="m">Expected cash</div><b>${fmt(e)}</b><div class="m">Difference: <b class="${df<0?'neg':df>0?'pos':''}">${fmt(df)}</b></div>`}
+async function saveCash(){if(v('k7')==='')return toast('Enter the cash you counted.');
+ try{await ok(sb.from('cash_sessions').upsert({business_id:B.id,day:v('k1')||today(),opening:num('k2'),cash_received:num('k3'),cash_expenses:num('k4'),refunds:num('k5'),other_net:num('k6'),actual_closing:num('k7'),refund_count:Math.round(num('k8')),void_count:Math.round(num('k9')),largest_txn:num('k10'),note:v('k11')},{onConflict:'business_id,day'}));closeS();toast('Saved');await refresh()}catch(e){}}
+
+/* ---- stock ---- */
+function stockV(){const lastC=p=>D.counts.filter(c=>c.product_id==p.id).sort((a,b)=>a.created_at<b.created_at?1:-1)[0],lt=p=>{const l=lastC(p);return l?`${+l.counted} (${+l.counted-+l.expected>=0?'+':''}${+l.counted-+l.expected})`:'-'};
+ return `<div class="hd"><h1>Stock control</h1><button class="a hb" onclick="prodForm()">+ Add product</button></div>`+(D.prod.length?lst(D.prod,['Product','SKU','Category','>Expected qty','>Last count'],p=>[`<b>${esc(p.name)}</b>`,esc(p.sku||'-'),esc(p.category||'-'),expQty(p),lt(p)],p=>`<div class="c" onclick="prodOpen('${p.id}')"><div class="r"><b>${esc(p.name)}</b><span class="tag">Expected ${expQty(p)}</span></div><div class="m">${esc(p.sku||'')} ${p.category?'· '+esc(p.category):''} · Last count ${lt(p)}</div></div>`,p=>`prodOpen('${p.id}')`):empty('No products yet.','Add products with their opening quantity, then record purchases, sales and stock counts.'))}
+function prodForm(){sheet(`<h1>Add product</h1>${fld('p1','Product name')}${fld('p2','SKU')}${fld('p3','Category')}${fld('p4','Purchase price','','number')}${fld('p5','Selling price','','number')}${fld('p6','Opening quantity','','number')}<button class="a" onclick="saveProd()">Save product</button>`)}
+async function saveProd(){if(!v('p1').trim())return toast('Enter a product name.');try{await ok(sb.from('products').insert({business_id:B.id,name:v('p1').trim(),sku:v('p2'),category:v('p3'),buy_price:num('p4'),sell_price:num('p5'),opening_qty:num('p6')}));closeS();await refresh()}catch(e){}}
+function prodOpen(id){const p=D.prod.find(x=>x.id==id),q=expQty(p);
+ sheet(`<div class="r"><h1 style="margin:0">${esc(p.name)}</h1><button onclick="closeS()">Close</button></div><div class="c"><div class="m">Expected stock</div><div class="big">${q}</div><div class="m">Opening ${+p.opening_qty} + purchases - sales - returns/damage +/- adjustments</div></div>
+ <h2>Record movement</h2>${sel('m1','Type',['purchase','sale','return','damage','adjustment'])}${fld('m2','Quantity (adjustment can be negative)','','number')}${fld('m3','Note')}<button class="a" onclick="saveMov('${id}')">Save movement</button>
+ <h2>Physical count</h2>${fld('m4','Quantity counted','','number')}<button class="a" onclick="saveCount('${id}')">Record count (expected ${q})</button>`)}
+async function saveMov(id){const q=num('m2');if(!q)return toast('Enter a quantity.');try{await ok(sb.from('inventory_movements').insert({business_id:B.id,product_id:id,kind:v('m1'),qty:q,note:v('m3')}));closeS();toast('Saved');await refresh()}catch(e){}}
+async function saveCount(id){if(v('m4')==='')return toast('Enter the counted quantity.');const p=D.prod.find(x=>x.id==id);try{await ok(sb.from('stock_counts').insert({business_id:B.id,product_id:id,expected:expQty(p),counted:num('m4'),unit_value:+p.buy_price}));closeS();toast('Count saved');await refresh()}catch(e){}}
+
+/* ---- receivables ---- */
+function owedV(){const L=[...D.rec].sort((a,b)=>a.due_on<b.due_on?-1:1),tot=L.reduce((a,r)=>a+Math.max(0,remn(r)),0),st=r=>{const rm=remn(r),d=daysPast(r.due_on);return rm<=0?'Paid':d>0?`<span class="neg">${d} days overdue</span>`:d==0?'Due today':'Due in '+(-d)+' days'};
+ return `<div class="hd"><h1>Receivables</h1><button class="a hb" onclick="recForm()">+ Add customer balance</button></div><div class="c"><div class="m">Total outstanding</div><div class="big">${fmt(tot)}</div></div><div style="height:4px"></div>`+(L.length?lst(L,['Customer','Reference','>Amount','>Remaining','Due','Status'],r=>[`<b>${esc(r.customer)}</b>`,esc(r.reference||'-'),fmt(r.amount),`<b>${fmt(remn(r))}</b>`,r.due_on,st(r)],r=>`<div class="c" onclick="recOpen('${r.id}')"><div class="r"><b>${esc(r.customer)}</b><b>${fmt(remn(r))}</b></div><div class="m">${esc(r.reference||'')} · ${st(r)}</div></div>`,r=>`recOpen('${r.id}')`):empty('No customer balances yet.','Record who owes you money and when it is due.'))}
+function recForm(){sheet(`<h1>Customer balance</h1>${fld('r1','Customer')}${fld('r2','Invoice / reference')}${fld('r3','Amount','','number')}${fld('r4','Amount already paid','','number')}${fld('r5','Date','' + today(),'date')}${fld('r6','Due date',dstr(14),'date')}<button class="a" onclick="saveRec()">Save</button>`)}
+async function saveRec(){if(!v('r1').trim()||num('r3')<=0)return toast('Enter the customer and an amount.');try{await ok(sb.from('receivables').insert({business_id:B.id,customer:v('r1').trim(),reference:v('r2'),amount:num('r3'),paid:num('r4'),issued_on:v('r5')||today(),due_on:v('r6')||dstr(14)}));closeS();await refresh()}catch(e){}}
+function recOpen(id){const r=D.rec.find(x=>x.id==id);sheet(`<div class="r"><h1 style="margin:0">${esc(r.customer)}</h1><button onclick="closeS()">Close</button></div><div class="c"><div class="m">Remaining</div><div class="big">${fmt(remn(r))}</div><div class="m">Amount ${fmt(r.amount)} · Paid ${fmt(r.paid)} · Due ${r.due_on}</div></div>${fld('y1','Payment received','','number')}<button class="a" onclick="savePay('${id}')">Record payment</button>`)}
+async function savePay(id){const r=D.rec.find(x=>x.id==id),a=num('y1');if(a<=0)return toast('Enter the amount received.');try{await ok(sb.from('receivables').update({paid:Math.min(+r.amount,+r.paid+a)}).eq('id',id));closeS();toast('Payment recorded');await refresh()}catch(e){}}
+
+/* ---- findings + investigations ---- */
+function findV(){const L=sortF(D.fnd.filter(f=>ff=='all'||(ff=='open'?isOpen(f):f.status==ff))),sv=f=>`<span class="sv ${SVC[f.severity]}"><i></i>${SVN[f.severity]}</span>`;
+ return `<div class="hd"><h1>Findings</h1></div><div class="chips">${[['open','Open'],['investigating','Investigating'],['explained','Explained'],['resolved','Resolved'],['all','All']].map(([k,n])=>`<button class="${ff==k?'on':''}" onclick="ff='${k}';render()">${n}</button>`).join('')}</div><div style="height:6px"></div>`+(L.length?lst(L,['Severity','Finding','>Amount','Status','Detail'],f=>[sv(f),`<b>${esc(f.title)}</b>`,f.impact?fmt(f.impact):'-',`<span class="tag st-${f.status}">${esc(f.status)}</span>`,`<span class="m">${esc(f.description)}</span>`],fcard,f=>`openF('${f.id}')`):empty('No findings here.','LeakGuard checks your cash closes, stock counts and customer balances automatically.'))}
+async function openF(id){const f=D.fnd.find(x=>x.id==id);let N=[];try{N=await ok(sb.from('finding_notes').select('*').eq('finding_id',id).order('created_at',{ascending:false}))}catch(e){}
+ sheet(`<div class="r"><span class="sv ${SVC[f.severity]}"><i></i>${SVN[f.severity]}</span><button onclick="closeS()">Close</button></div><h1 style="margin-top:8px">${esc(f.title)}</h1>${f.impact?`<div class="big">${fmt(f.impact)}</div><div class="m">Potential amount requiring review</div>`:''}<p>${esc(f.description)}</p><div class="m">Evidence: ${esc(f.evidence||'-')}</div><div class="c"><b>Recommended action</b><div>${esc(f.action||'')}</div></div>
+ ${sel('i1','Status',['open','investigating','explained','resolved'],f.status)}<label>Note or supporting reference</label><textarea id="i2" placeholder="What did you check or find?"></textarea><button class="a" onclick="saveNote('${id}')">Save update</button>
+ <h2>Investigation trail</h2><div class="tl">${N.map(n=>`<div><b>${esc(n.status_to||'note')}</b>${n.note?': '+esc(n.note):''}<div class="m">${new Date(n.created_at).toLocaleString()} · ${n.created_by==U.id?'You':'Team member'}</div></div>`).join('')||'<div class="m">No updates yet.</div>'}</div>`)}
+async function saveNote(id){const f=D.fnd.find(x=>x.id==id),st=v('i1'),nt=v('i2').trim();if(st==f.status&&!nt)return toast('Add a note or change the status.');
+ try{await ok(sb.from('finding_notes').insert({business_id:B.id,finding_id:id,note:nt||null,status_to:st}));if(st!=f.status)await ok(sb.from('findings').update({status:st}).eq('id',id));closeS();toast('Updated');await loadData();render()}catch(e){}}
+
+/* ---- more: reports, alerts, demo ---- */
+function reportV(){const n={day:1,week:7,month:30}[rp],st=dstr(-(n-1)),ps=dstr(-(2*n-1)),pe=dstr(-n),C=D.cash.filter(c=>c.day>=st),PC=D.cash.filter(c=>c.day>=ps&&c.day<=pe),sum=(a,k)=>a.reduce((x,c)=>x+ +c[k],0),rc=sum(C,'cash_received'),pr=sum(PC,'cash_received');
+ const dif=C.map(c=>+c.actual_closing-expCash(c)).filter(d=>Math.abs(d)>=1000),SC=D.counts.filter(s=>String(s.created_at).slice(0,10)>=st&&+s.counted!=+s.expected),od=D.rec.filter(r=>remn(r)>0&&daysPast(r.due_on)>0).reduce((a,r)=>a+remn(r),0),FN=D.fnd.filter(f=>String(f.created_at).slice(0,10)>=st),un=FN.filter(isOpen),tr=pr>0?Math.round((rc-pr)/pr*100):null;
+ const row=(a,b)=>`<div class="r"><span>${a}</span><b>${b}</b></div>`;
+ return `<div class="chips">${[['day','Daily'],['week','Weekly'],['month','Monthly']].map(([k,t])=>`<button class="${rp==k?'on':''}" onclick="rp='${k}';render()">${t}</button>`).join('')}</div><div class="c rpt">${row('Cash received',fmt(rc)+(tr==null?'':` (${tr>=0?'+':''}${tr}%)`))}${row('Cash expenses',fmt(sum(C,'cash_expenses')))}${row('Cash discrepancies',dif.length+' · '+fmt(dif.reduce((a,d)=>a+Math.abs(d),0)))}${row('Stock discrepancies',SC.length+' · '+fmt(SC.reduce((a,s)=>a+Math.abs(+s.counted-+s.expected)*+s.unit_value,0)))}${row('Overdue receivables',fmt(od))}${row('Unusual activity flags',FN.filter(f=>['txn','refund','void'].includes(f.type)).length)}${row('Findings resolved / unresolved',FN.filter(f=>f.status=='resolved').length+' / '+un.length)}${row('Potential amount requiring review',fmt(un.reduce((a,f)=>a+ +(f.impact||0),0)))}</div><div class="m">${C.length?'':'No cash closes in this period. '}These figures are discrepancies to review, not confirmed losses.</div>`}
+function moreV(){const unr=D.nt.filter(x=>!x.is_read);
+ return `<div class="hd"><h1>Reports and settings</h1></div><div class="dg"><div class="full"><h2 style="margin-top:6px">Reports</h2>${reportV()}</div>
+ <div class="w2"><h2>Alerts ${unr.length?`(${unr.length} new)`:''}</h2>${D.nt.slice(0,8).map(x=>`<div class="c ${x.is_read?'':'f c2'}" style="margin:0 0 8px"><div>${esc(x.message)}</div><div class="m">${new Date(x.created_at).toLocaleString()}</div></div>`).join('')||empty('No alerts yet.','New findings will appear here.')}${unr.length?'<button class="g" onclick="markRead()">Mark all as read</button>':''}</div>
+ <div><h2 id="settings">Business</h2><div class="c" style="margin:0 0 8px"><b>${esc(B.name)}</b><div class="m">${esc(B.business_type||'')} ${B.location?'· '+esc(B.location):''}</div><div class="m">${esc(U.email)}</div></div>${BZ.length>1?BZ.map(b=>`<div class="c" style="margin:0 0 8px" onclick="LS.s('lg_biz','${b.id}');boot()"><b>${esc(b.name)}</b> ${b.id==B.id?'<span class="tag">current</span>':''} ${b.is_demo?'<span class="tag">demo</span>':''}</div>`).join(''):''}
+ ${B.is_demo?'<button class="g neg" onclick="delDemo()">Delete this demo business</button>':'<button class="g" onclick="demo()">Create a demo business to explore</button>'}<button class="g" onclick="sb.auth.signOut()">Sign out</button></div></div>
+ <p class="m">LeakGuard reports discrepancies and unusual activity. It does not accuse anyone. Always investigate before drawing conclusions.</p>`}
+async function markRead(){try{await ok(sb.from('notifications').update({is_read:true}).eq('business_id',B.id).eq('is_read',false));await loadData();render()}catch(e){}}
+
+/* ---- demo ---- */
+async function demo(){try{const id=await ok(sb.rpc('create_business',{p_name:'Demo: Kato Hardware',p_type:'Hardware shop',p_location:'Kampala',p_employees:4,p_inv:true,p_credit:true,p_cash:true}));
+ await ok(sb.from('businesses').update({is_demo:true}).eq('id',id));
+ const P=await ok(sb.from('products').insert([{business_id:id,name:'Cement 50kg',sku:'CEM-50',category:'Building',buy_price:44800,sell_price:52000,opening_qty:100},{business_id:id,name:'Iron sheet 3m',sku:'IRS-3',category:'Roofing',buy_price:38000,sell_price:45000,opening_qty:60},{business_id:id,name:'Paint 4L',sku:'PNT-4',category:'Paint',buy_price:32000,sell_price:40000,opening_qty:40}]).select());
+ const cm=P[0].id;await ok(sb.from('inventory_movements').insert([{business_id:id,product_id:cm,kind:'purchase',qty:30,note:'Delivery'},{business_id:id,product_id:cm,kind:'sale',qty:80,note:'Weekly sales'},{business_id:id,product_id:cm,kind:'damage',qty:3,note:'Damaged bags'}]));
+ await ok(sb.from('stock_counts').insert({business_id:id,product_id:cm,expected:47,counted:42,unit_value:44800,note:'Weekly count'}));
+ const cs=[];for(let i=5;i>=1;i--){const rc=900000+i*40000,ex=120000+i*5000,op=450000+i*10000;cs.push({business_id:id,day:dstr(-i),opening:op,cash_received:rc,cash_expenses:ex,refunds:0,other_net:0,actual_closing:op+rc-ex,refund_count:i%2,void_count:0,largest_txn:90000+i*12000})}
+ cs.push({business_id:id,day:today(),opening:500000,cash_received:1200000,cash_expenses:150000,refunds:0,other_net:0,actual_closing:1420000,refund_count:4,void_count:0,largest_txn:780000,note:'Demo day'});await ok(sb.from('cash_sessions').insert(cs));
+ await ok(sb.from('receivables').insert([{business_id:id,customer:'ABC Hardware',reference:'INV-1042',amount:640000,paid:0,issued_on:dstr(-40),due_on:dstr(-12)},{business_id:id,customer:'Mukasa Builders',reference:'INV-1011',amount:600000,paid:0,issued_on:dstr(-55),due_on:dstr(-25)},{business_id:id,customer:'Nile Supplies',reference:'INV-1060',amount:300000,paid:0,issued_on:dstr(-9),due_on:dstr(5)}]));
+ LS.s('lg_biz',id);tab='home';await boot()}catch(e){}}
+async function delDemo(){if(!confirm('Delete this demo business and its data?'))return;try{await ok(sb.from('businesses').delete().eq('id',B.id));LS.s('lg_biz','');await boot()}catch(e){}}
+
+/* ---- brand sheet: splash, onboarding steps, header, dashboard ---- */
+I.bell='<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/>';I.warn='<path d="M12 4 3 19.5h18z"/><path d="M12 10v4.5M12 17.2v.1"/>';
+let OB={},obStep=1,sec='';
+function splash(){shell(0);$('#app').innerHTML=`<div class="splash"><img src="icon-192.png" alt=""><h1>LeakGuard</h1><p>Know where your money is leaking.</p><div class="btns"><button class="go" onclick="authView('up')">Get Started</button><button class="ol" onclick="authView('in')">Log In</button></div><small>DETECT · ANALYZE · PROTECT · GROW</small></div>`}
+function onboard(){shell(0);const st=obStep,hd=`<div class="r"><b>Business onboarding</b><span class="m">${st}/3</span></div><div class="prog"><i style="width:${st/3*100}%"></i></div>`;
+ const body=st==1?`<h1>Tell us about your business</h1>${fld('o1','Business name',OB.name)}${sel('o2','Business type',TYPES,OB.type)}<button class="a" onclick="obNext()">Next</button>`
+ :st==2?`<h1>Where and how big?</h1>${fld('o3','Location',OB.loc)}${fld('o4','Number of employees',OB.emp,'number')}<button class="a" onclick="obNext()">Next</button><button class="g" onclick="obBack()">Back</button>`
+ :`<h1>How does money move?</h1>${sel('o5','Do you hold inventory?',YN,OB.inv)}${sel('o6','Do you sell on credit?',YN,OB.cr)}${sel('o7','Do you handle cash?',YN,OB.cash)}<button class="a" onclick="saveOb()">Start LeakGuard</button><button class="g" onclick="obBack()">Back</button><button class="g" style="border-color:transparent" onclick="demo()">Or explore with demo data</button>`;
+ $('#app').innerHTML=`<div class="c" style="margin-top:20px">${hd}${body}</div>`}
+function obRead(){if(obStep==1){OB.name=v('o1').trim();OB.type=v('o2')}else if(obStep==2){OB.loc=v('o3').trim();OB.emp=v('o4')}else{OB.inv=v('o5');OB.cr=v('o6');OB.cash=v('o7')}}
+function obNext(){obRead();if(obStep==1&&!OB.name)return toast('Enter your business name.');obStep++;onboard()}
+function obBack(){obRead();obStep--;onboard()}
+async function saveOb(){obRead();if(!OB.name)return toast('Enter your business name.');
+ try{const id=await ok(sb.rpc('create_business',{p_name:OB.name,p_type:OB.type||'Other',p_location:OB.loc||'',p_employees:Math.round(parseFloat(OB.emp)||0),p_inv:OB.inv!='No',p_credit:OB.cr!='No',p_cash:OB.cash!='No'}));LS.s('lg_biz',id);OB={};obStep=1;await boot()}catch(e){}}
+function who(){const n=String(U&&U.email||'').split('@')[0].split(/[._\-0-9]+/)[0]||'there';return n.charAt(0).toUpperCase()+n.slice(1)}
+function render(){const T=[['home','Home','home',1],['cash','Cash','cash',B.uses_cash],['stock','Stock','box',B.has_inventory],['owed','Owed','owed',B.has_credit],['find','Findings','flag',1],['more','More','more',1]].filter(t=>t[3]);
+ if(!T.some(t=>t[0]==tab))tab='home';shell(1);
+ const body={home:homeV,cash:cashV,stock:stockV,owed:owedV,find:findV,more:moreV}[tab](),un=D.nt.filter(x=>!x.is_read).length,bad=D.fnd.filter(f=>isOpen(f)&&f.severity!='monitor').length,ini=(who()[0]||'U').toUpperCase();
+ const S=[['home','Dashboard','home',tab=='home'],['cash','Cash','cash',tab=='cash',B.uses_cash],['stock','Stock','box',tab=='stock',B.has_inventory],['owed','Receivables','owed',tab=='owed',B.has_credit],['find','Findings','flag',tab=='find'&&ff!='investigating'],['inv','Investigations','owed',tab=='find'&&ff=='investigating'],['rep','Reports','cash',tab=='more'&&sec!='settings'],['set','Settings','more',tab=='more'&&sec=='settings']].filter(x=>x[4]===undefined||x[4]);
+ const bell=`<button class="bell" aria-label="Alerts" onclick="go('more')">${ic('bell',18)}${un?`<em>${un}</em>`:''}</button>`;
+ $('#app').innerHTML=`<aside class="sb"><div class="brand"><img src="icon-192.png" alt="" width="34" height="34"><b>LeakGuard</b></div>${S.map(([k,n,i,on])=>`<button class="si ${on?'on':''}" onclick="nav('${k}')">${ic(i,20)}<span>${n}</span>${k=='find'&&bad?`<span class="bdg">${bad}</span>`:''}</button>`).join('')}<div class="sbf"><div>${esc(B.name)}</div><div class="m2">${esc(U.email)}</div><button class="si" onclick="sb.auth.signOut()">Sign out</button></div></aside><main id="main"><div class="mtop"><img src="icon-192.png" alt="" width="30" height="30" style="border-radius:8px"><b>LeakGuard</b><span class="sp">${bell}</span></div><div class="tbar">${BZ.length>1?`<select aria-label="Business" onchange="LS.s('lg_biz',this.value);boot()">${BZ.map(b=>`<option value="${b.id}" ${b.id==B.id?'selected':''}>${esc(b.name)}</option>`).join('')}</select>`:`<span class="m">${esc(B.name)}</span>`}${bell}<span class="av">${esc(ini)}</span></div>${B.is_demo?'<div class="demo">DEMO DATA. This is a sample business, not your real data.</div>':''}${body}</main><nav class="bn">${T.map(([k,n,i])=>`<button class="${tab==k?'on':''}" onclick="go('${k}')">${ic(i)}<span>${n}</span></button>`).join('')}</nav>`;
+ try{document.querySelectorAll('[onclick]:not(button):not(a)').forEach(e=>{e.tabIndex=0})}catch(e){}
+ if(tab=='more'&&sec=='settings'){const el=document.getElementById('settings');if(el)el.scrollIntoView()}}
+function nav(k){sec='';if(k=='inv'){ff='investigating';tab='find'}else if(k=='find'){if(ff=='investigating')ff='open';tab='find'}else if(k=='rep'){tab='more'}else if(k=='set'){tab='more';sec='settings'}else tab=k;render();if(!(tab=='more'&&sec=='settings'))scrollTo(0,0)}
+function go(k){sec='';tab=k;render();scrollTo(0,0)}
+function homeV(){const F=D.fnd.filter(isOpen),n=s=>F.filter(f=>f.severity==s).length,tot=F.reduce((a,f)=>a+ +(f.impact||0),0),lc=D.cash[0],lcd=lc?+lc.actual_closing-expCash(lc):0,top=sortF(F),h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+ const OD=D.rec.filter(r=>remn(r)>0&&daysPast(r.due_on)>0),od=OD.reduce((a,r)=>a+remn(r),0),cu=new Set(OD.map(r=>r.customer)).size;
+ const SF=F.filter(f=>f.type=='stock'),sv=SF.reduce((a,f)=>a+ +(f.impact||0),0),units=D.counts.filter(c=>+c.counted<+c.expected&&SF.some(f=>f.dedupe_key=='stock:'+c.id)).reduce((a,c)=>a+(+c.expected-+c.counted),0);
+ const tile=(cls,i,t)=>`<div class="ct"><span class="it ${cls}">${ic(i,18)}</span>${t}</div>`;
+ return `<div class="hd"><div><h1 style="margin-bottom:2px">${g}, ${esc(who())}</h1><div class="m">Here's what needs your attention today.</div></div></div>
+ <div class="c kpi" style="margin-top:14px"><span class="ai">${ic('warn',22)}</span><div style="flex:1;min-width:180px"><div class="m">Potential money requiring review</div><div class="big">${fmt(tot)}</div></div><div class="cnts"><span class="cn c1"><i></i><b>${n('critical')}</b>Critical</span><span class="cn c2"><i></i><b>${n('attention')}</b>Attention</span><span class="cn c3"><i></i><b>${n('monitor')}</b>Monitor</span></div></div>
+ <div class="dg">${B.uses_cash?`<div class="c" onclick="go('cash')">${tile('g','cash','Cash')}${lc?`<div class="kv"><span>Expected</span><b>${fmt(expCash(lc))}</b></div><div class="kv"><span>Actual</span><b>${fmt(lc.actual_closing)}</b></div><div class="kv"><span>Difference</span>${dfc(lcd)}</div>`:'<div class="m">No cash close recorded yet. Tap to record one.</div>'}</div>`:''}
+ ${B.has_inventory?`<div class="c" onclick="go('stock')">${tile('o','box','Stock')}<div class="big" style="font-size:20px">${SF.length} discrepanc${SF.length==1?'y':'ies'}</div><div class="m">${units} unit${units==1?'':'s'} unaccounted for</div><div class="kv" style="margin-top:6px"><span>Potential value</span><b>${fmt(sv)}</b></div></div>`:''}
+ ${B.has_credit?`<div class="c" onclick="go('owed')">${tile('b','owed','Receivables')}<div class="big" style="font-size:20px">${fmt(od)}</div><div class="m">overdue · ${cu} customer${cu==1?'':'s'}</div><span class="lnk">View details →</span></div>`:''}</div>
+ ${chart()}
+ <h2>Recent findings</h2>${top.length?`<div class="fg">${top.slice(0,6).map(fcard).join('')}</div><button class="g" style="width:auto;padding:8px 18px" onclick="go('find')">View all</button>`:empty('Nothing needs attention yet.',`Record today's cash close${B.has_inventory?', add products and count stock':''}${B.has_credit?' or add customer balances':''} and LeakGuard will check them for discrepancies.`)+(D.cash.length+D.prod.length+D.rec.length?'':'<button class="g" onclick="demo()">Load demo data to see it in action</button>')}`}
+['doAuth','saveOb','saveCash','saveProd','saveMov','saveCount','saveRec','savePay','saveNote','demo','markRead'].forEach(n=>{window[n]=guard(window[n])});
+addEventListener('keydown',e=>{const t=e.target;if((e.key=='Enter'||e.key==' ')&&t&&t.matches&&t.matches('[onclick]:not(button):not(a):not(input):not(select):not(textarea)')){e.preventDefault();t.click()}});
+sb.auth.getSession().then(({data})=>{if(!data.session)splash()});
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script></body></html>
